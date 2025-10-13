@@ -2,6 +2,7 @@ package com.freetime.shop.ui.feature.home
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +21,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         }
 
         is HomeScreenUIEvents.Success -> {
-            val data = (uiState as HomeScreenUIEvents.Success).data
+            val data = (uiState.value as HomeScreenUIEvents.Success).data
             LazyColumn {
                 items(data) { product ->
                     ProductItem(product = product)
@@ -29,10 +30,25 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
         }
 
         is HomeScreenUIEvents.Error -> {
-            Text(text = (uiState as HomeScreenUIEvents.Error).message)
+            Text(text = (uiState.value as HomeScreenUIEvents.Error).message)
         }
     }
 }
 
 @Composable
-fun ProductItem(product: Product)
+fun ProductItem(product: Product) {
+    Card (modifier = Modifier.padding(8.dp)) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = product.title, style = MaterialTheme.typography.titleMedium)
+                Text(text = "$${product.price}", style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
