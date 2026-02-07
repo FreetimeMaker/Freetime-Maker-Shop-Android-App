@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FreetimeMakerShop"
-        android:name="Freetime Maker Shop" >
+        android:name=".FreetimeMakerShopApp" >
         <activity
             android:name=".MainActivity"
             android:exported="true"
