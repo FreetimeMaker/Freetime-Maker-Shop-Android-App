@@ -21,5 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Freetime Maker Shop"
 include(":app")
-include(":data")
-include(":domain")
