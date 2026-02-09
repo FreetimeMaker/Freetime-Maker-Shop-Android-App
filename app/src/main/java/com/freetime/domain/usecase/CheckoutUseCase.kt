@@ -15,7 +15,12 @@ class CheckoutUseCase(
     suspend operator fun invoke(customerEmail: String): Result<CheckoutResult> {
         return try {
             // Get cart items
-            val cartItems = productRepository.getCartItems().collect { it }
+            val cartItems = mutableListOf<com.freetime.domain.model.CartItem>()
+            productRepository.getCartItems().collect { items ->
+                cartItems.clear()
+                cartItems.addAll(items)
+            }
+            
             if (cartItems.isEmpty()) {
                 return Result.failure(Exception("Cart is empty"))
             }

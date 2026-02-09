@@ -6,6 +6,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -214,9 +216,9 @@ fun ProductDetailScreen(
                         IconButton(
                             onClick = { if (quantity > 1) quantity-- }
                         ) {
-                            Text(
-                                text = "-",
-                                style = MaterialTheme.typography.titleLarge
+                            Icon(
+                                imageVector = Icons.Default.Remove,
+                                contentDescription = "Decrease quantity"
                             )
                         }
                         
@@ -229,9 +231,9 @@ fun ProductDetailScreen(
                         IconButton(
                             onClick = { quantity++ }
                         ) {
-                            Text(
-                                text = "+",
-                                style = MaterialTheme.typography.titleLarge
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Increase quantity"
                             )
                         }
                     }
