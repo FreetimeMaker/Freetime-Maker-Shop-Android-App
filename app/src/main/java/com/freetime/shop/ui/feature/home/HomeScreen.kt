@@ -199,6 +199,7 @@ fun PlatformFilter(
         null to "All",
         Platform.ANDROID to "Android",
         Platform.WINDOWS to "Windows",
+        Platform.MACOS to "MacOS",
         Platform.LINUX to "Linux"
     )
     
