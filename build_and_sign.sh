@@ -13,9 +13,6 @@ OUT_APK="FMS-$TAG.apk"
 echo "==> Erstelle Tag $TAG"
 git tag "$TAG"
 
-echo "==> Pushe Tag $TAG auf GitHub"
-git push origin "$TAG"
-
 echo "==> Hole Tags von GitHub"
 git fetch --tags
 
@@ -46,3 +43,9 @@ apksigner verify --verbose "$OUT_APK"
 
 echo "==> Fertig!"
 echo "Signierte APK: $OUT_APK"
+
+echo "==> Zurück zum Hauptbranch wechseln"
+git checkout master
+
+echo "==> Pushe Tag $TAG auf GitHub"
+git push origin "$TAG"
