@@ -29,7 +29,8 @@ enum class WallpaperCategory {
     ANIMALS,
     VINTAGE,
     GEOMETRIC,
-    CAT
+    CAT,
+    SELFMADE
 }
 
 @Serializable
@@ -74,16 +75,16 @@ enum class OrderStatus {
 object SampleWallpapers {
     val wallpapers = listOf(
         Wallpaper(
-            id = "black_cat",
-            title = "Black Cat",
-            description = "Beautiful Black Cat with a black Background.",
-            price = 4.99,
-            category = WallpaperCategory.CAT,
+            id = "first_background",
+            title = "First Background",
+            description = "This is my First Background I made.",
+            price = 10.00,
+            category = WallpaperCategory.SELFMADE,
             resolution = Resolution.MOBILE,
-            imageUrl = "https://images.unsplash.com/photo-1720064921203-22ba396237c2?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8TW9iaWxlJTIwV2FsbHBhcGVyJTIwS2F0emV8ZW58MHx8MHx8fDA%3D",
+            imageUrl = "https://freetimemaker.github.io/Freetime-Maker-Shop/images/fb.png",
             downloadUrl = "https://1024terabox.com/s/1i7NtDzduOsy47_LRtfOHhg",
             fileSize = 588093,
-            tags = listOf("cat", "black", "black cat")
+            tags = listOf("selfmade", "crazy")
         )
     )
 }
