@@ -2,26 +2,24 @@ package com.freetime.shop.ui.feature.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
-import com.freetime.domain.model.Product
-import com.freetime.domain.model.ProductCategory
-import com.freetime.domain.model.Platform
 import com.freetime.domain.model.Wallpaper
 import com.freetime.domain.model.WallpaperCategory
+import com.freetime.domain.model.Resolution
 import com.freetime.domain.viewmodel.ProductViewModel
 import com.freetime.domain.viewmodel.ProductUIState
 
@@ -31,122 +29,98 @@ fun HomeScreen(navController: NavController, viewModel: ProductViewModel = koinV
     val uiState by viewModel.uiState.collectAsState()
     val filteredProducts by viewModel.filteredProducts.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
-    val selectedPlatform by viewModel.selectedPlatform.collectAsState()
+    val selectedResolution by viewModel.selectedPlatform.collectAsState()
     
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        // Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Freetime Wallpaper Shop", fontWeight = FontWeight.Bold) },
+                actions = {
+                    IconButton(onClick = { navController.navigate("cart") }) {
+                        Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "Cart")
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
         ) {
-            Text(
-                text = "Freetime Maker Shop",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // Category Filter
+            CategoryFilter(
+                selectedCategory = selectedCategory,
+                onCategorySelected = viewModel::filterByCategory
             )
             
-            IconButton(
-                onClick = { navController.navigate("cart") }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ShoppingCart,
-                    contentDescription = "Cart"
-                )
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Category Filter
-        CategoryFilter(
-            selectedCategory = selectedCategory,
-            onCategorySelected = viewModel::filterByCategory
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        // Platform Filter
-        PlatformFilter(
-            selectedPlatform = selectedPlatform,
-            onPlatformSelected = viewModel::filterByPlatform
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Clear Filters Button
-        if (selectedCategory != null || selectedPlatform != null) {
-            Button(
-                onClick = { viewModel.clearFilters() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Clear Filters")
-            }
             Spacer(modifier = Modifier.height(8.dp))
-        }
-        
-        // Content
-        when (uiState) {
-            is ProductUIState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            
+            // Resolution Filter
+            ResolutionFilter(
+                selectedResolution = selectedResolution,
+                onResolutionSelected = viewModel::filterByPlatform
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Clear Filters Button
+            if (selectedCategory != null || selectedResolution != null) {
+                OutlinedButton(
+                    onClick = { viewModel.clearFilters() },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    CircularProgressIndicator()
+                    Text("Clear Filters")
                 }
+                Spacer(modifier = Modifier.height(8.dp))
             }
             
-            is ProductUIState.Success -> {
-                if (filteredProducts.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("No products found")
+            // Content
+            when (uiState) {
+                is ProductUIState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(filteredProducts) { product ->
-                            ProductCard(
-                                product = product,
-                                onProductClick = { 
-                                    navController.navigate("product/${product.id}")
-                                },
-                                onAddToCart = { 
-                                    navController.navigate("product/${product.id}")
-                                }
-                            )
+                }
+                
+                is ProductUIState.Success -> {
+                    if (filteredProducts.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("No wallpapers found matching your filters")
+                        }
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(bottom = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(filteredProducts) { wallpaper ->
+                                WallpaperCard(
+                                    wallpaper = wallpaper,
+                                    onProductClick = { 
+                                        navController.navigate("product/${wallpaper.id}")
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
-            
-            is ProductUIState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = (uiState as ProductUIState.Error).message,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = { viewModel.refreshProducts() }
-                        ) {
-                            Text("Retry")
+                
+                is ProductUIState.Error -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = (uiState as ProductUIState.Error).message,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(onClick = { viewModel.refreshProducts() }) {
+                                Text("Retry")
+                            }
                         }
                     }
                 }
@@ -160,27 +134,21 @@ fun CategoryFilter(
     selectedCategory: WallpaperCategory?,
     onCategorySelected: (WallpaperCategory?) -> Unit
 ) {
-    val categories: List<Pair<WallpaperCategory?, String>> = listOf(
+    val categories = listOf(
         null to "All",
         WallpaperCategory.ABSTRACT to "Abstract",
         WallpaperCategory.NATURE to "Nature",
         WallpaperCategory.CITYSCAPE to "Cityscape",
-        WallpaperCategory.MINIMALIST to "Minimalist",
-        WallpaperCategory.TECHNOLOGY to "Technology",
-        WallpaperCategory.ARTISTIC to "Artistic",
+        WallpaperCategory.CAT to "Cats",
         WallpaperCategory.SPACE to "Space",
-        WallpaperCategory.ANIMALS to "Animals",
-        WallpaperCategory.VINTAGE to "Vintage",
-        WallpaperCategory.GEOMETRIC to "Geometric",
-        WallpaperCategory.CAT to "Cat"
+        WallpaperCategory.MINIMALIST to "Minimalist"
     )
     
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 4.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(categories.size) { index ->
-            val (category, name) = categories[index] as Pair<WallpaperCategory, String>
+            val (category, name) = categories[index]
             FilterChip(
                 selected = selectedCategory == category,
                 onClick = { onCategorySelected(category) },
@@ -191,27 +159,26 @@ fun CategoryFilter(
 }
 
 @Composable
-fun PlatformFilter(
-    selectedPlatform: Platform?,
-    onPlatformSelected: (Platform?) -> Unit
+fun ResolutionFilter(
+    selectedResolution: Resolution?,
+    onResolutionSelected: (Resolution?) -> Unit
 ) {
-    val platforms: List<Pair<Platform?, String>> = listOf(
-        null to "All",
-        Platform.ANDROID to "Android",
-        Platform.WINDOWS to "Windows",
-        Platform.MACOS to "MacOS",
-        Platform.LINUX to "Linux"
+    val resolutions = listOf(
+        null to "Any Res",
+        Resolution.MOBILE to "Mobile",
+        Resolution.FULL_HD_1080P to "1080p",
+        Resolution.UHD_4K to "4K",
+        Resolution.ULTRAWIDE to "Ultrawide"
     )
     
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 4.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(platforms.size) { index ->
-            val (platform, name) = platforms[index] as Pair<Platform, String>
+        items(resolutions.size) { index ->
+            val (res, name) = resolutions[index]
             FilterChip(
-                selected = selectedPlatform == platform,
-                onClick = { onPlatformSelected(platform) },
+                selected = selectedResolution == res,
+                onClick = { onResolutionSelected(res) },
                 label = { Text(name) }
             )
         }
@@ -219,62 +186,52 @@ fun PlatformFilter(
 }
 
 @Composable
-fun ProductCard(
+fun WallpaperCard(
     wallpaper: Wallpaper,
-    onProductClick: () -> Unit,
-    onAddToCart: () -> Unit
+    onProductClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp),
-        onClick = onProductClick
+            .height(260.dp),
+        onClick = onProductClick,
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
+        Column {
+            Box(modifier = Modifier.weight(1f)) {
+                AsyncImage(
+                    model = wallpaper.imageUrl,
+                    contentDescription = wallpaper.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            
+            Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = wallpaper.title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 2
+                    maxLines = 1
                 )
                 
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                Text(
-                    text = wallpaper.category.name.replace("_", " "),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                Text(
-                    text = wallpaper.resolution.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-            
-            Column {
-                Text(
-                    text = "$${wallpaper.price}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-                
-                Button(
-                    onClick = onAddToCart,
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("View Details")
+                    Text(
+                        text = "$${wallpaper.price}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    Text(
+                        text = wallpaper.resolution.name.replace("_", " "),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }

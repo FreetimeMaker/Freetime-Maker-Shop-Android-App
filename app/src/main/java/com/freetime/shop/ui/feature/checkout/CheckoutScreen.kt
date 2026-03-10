@@ -5,7 +5,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -89,7 +88,7 @@ fun CheckoutScreen(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = cartItem.product.title,
+                                    text = cartItem.wallpaper.title,
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium
                                 )
@@ -100,7 +99,7 @@ fun CheckoutScreen(
                                 )
                             }
                             Text(
-                                text = "$${cartItem.product.price * cartItem.quantity}",
+                                text = "$${cartItem.wallpaper.price * cartItem.quantity}",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -166,7 +165,7 @@ fun CheckoutScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "Your product code will be sent to this email after purchase confirmation.",
+                        text = "Your download links will be sent to this email after purchase confirmation.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -211,7 +210,7 @@ fun CheckoutScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "• Multiple payment providers available\n• Secure transaction processing\n• Instant confirmation",
+                        text = "• Support for multiple Cryptocurrencies\n• Direct Wallet integration\n• Fast and secure",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -223,40 +222,20 @@ fun CheckoutScreen(
             // Action Buttons
             Column {
                 Button(
-                    onClick = { checkoutViewModel.performCheckout() },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = !isProcessing && emailInput.isNotBlank()
-                ) {
-                    if (isProcessing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Processing...")
-                    } else {
-                        Text("Complete Purchase - $${cartTotal}")
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                OutlinedButton(
                     onClick = {
                         val encodedEmail = URLEncoder.encode(
                             emailInput,
                             StandardCharsets.UTF_8.toString()
                         )
-                        // Aktuell nutzen wir BTC als Standard-Kryptowährung
+                        // Redirect to the unified PaymentScreen
                         navController.navigate("payment/$cartTotal/BTC/$encodedEmail")
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isProcessing && emailInput.isNotBlank()
                 ) {
-                    Text("Pay with Crypto Wallet")
+                    Text("Pay with Crypto Wallet - $${cartTotal}")
                 }
-
+                
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedButton(
@@ -272,28 +251,13 @@ fun CheckoutScreen(
         }
     }
     
-    // Handle checkout states
-    when (checkoutUIState) {
-        is CheckoutUIState.Success -> {
-            LaunchedEffect(Unit) {
-                navController.navigate("order_success") {
-                    popUpTo("home") { inclusive = false }
-                }
+    // Handle checkout states if using checkoutViewModel.performCheckout()
+    // However, we are navigating to PaymentScreen directly for better FreetimeSDK integration
+    LaunchedEffect(checkoutUIState) {
+        if (checkoutUIState is CheckoutUIState.Success) {
+            navController.navigate("order_success") {
+                popUpTo("home") { inclusive = false }
             }
-        }
-        
-        is CheckoutUIState.Error -> {
-            LaunchedEffect(Unit) {
-                // Show error dialog or snackbar
-            }
-        }
-        
-        is CheckoutUIState.Pending -> {
-            // Show pending state
-        }
-        
-        else -> {
-            // Idle or Processing state
         }
     }
 }

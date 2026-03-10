@@ -3,11 +3,11 @@ package com.freetime.domain.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.freetime.domain.model.CartItem
+import com.freetime.domain.model.Wallpaper
 import com.freetime.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class CartViewModel(
@@ -47,30 +47,30 @@ class CartViewModel(
         }
     }
     
-    fun addToCart(product: com.freetime.domain.model.Product, quantity: Int = 1) {
+    fun addToCart(wallpaper: Wallpaper, quantity: Int = 1) {
         viewModelScope.launch {
             try {
-                productRepository.addToCart(product, quantity)
+                productRepository.addToCart(wallpaper, quantity)
             } catch (e: Exception) {
                 _uiState.value = CartUIState.Error(e.message ?: "Failed to add to cart")
             }
         }
     }
     
-    fun removeFromCart(productId: String) {
+    fun removeFromCart(wallpaperId: String) {
         viewModelScope.launch {
             try {
-                productRepository.removeFromCart(productId)
+                productRepository.removeFromCart(wallpaperId)
             } catch (e: Exception) {
                 _uiState.value = CartUIState.Error(e.message ?: "Failed to remove from cart")
             }
         }
     }
     
-    fun updateQuantity(productId: String, quantity: Int) {
+    fun updateQuantity(wallpaperId: String, quantity: Int) {
         viewModelScope.launch {
             try {
-                productRepository.updateCartQuantity(productId, quantity)
+                productRepository.updateCartQuantity(wallpaperId, quantity)
             } catch (e: Exception) {
                 _uiState.value = CartUIState.Error(e.message ?: "Failed to update quantity")
             }

@@ -83,7 +83,7 @@ fun CartScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "Add some products to get started",
+                            text = "Add some wallpapers to get started",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -93,7 +93,7 @@ fun CartScreen(
                         Button(
                             onClick = { navController.navigate("home") }
                         ) {
-                            Text("Browse Products")
+                            Text("Browse Wallpapers")
                         }
                     }
                 }
@@ -115,10 +115,10 @@ fun CartScreen(
                             CartItemCard(
                                 cartItem = cartItem,
                                 onQuantityChange = { newQuantity ->
-                                    cartViewModel.updateQuantity(cartItem.product.id, newQuantity)
+                                    cartViewModel.updateQuantity(cartItem.wallpaper.id, newQuantity)
                                 },
                                 onRemove = {
-                                    cartViewModel.removeFromCart(cartItem.product.id)
+                                    cartViewModel.removeFromCart(cartItem.wallpaper.id)
                                 }
                             )
                         }
@@ -222,7 +222,7 @@ fun CartItemCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = cartItem.product.title,
+                        text = cartItem.wallpaper.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -230,7 +230,7 @@ fun CartItemCard(
                     Spacer(modifier = Modifier.height(4.dp))
                     
                     Text(
-                        text = cartItem.product.category.name.replace("_", " "),
+                        text = cartItem.wallpaper.category.name.replace("_", " "),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -238,7 +238,7 @@ fun CartItemCard(
                     Spacer(modifier = Modifier.height(4.dp))
                     
                     Text(
-                        text = "$${cartItem.product.price}",
+                        text = "$${cartItem.wallpaper.price}",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -298,7 +298,7 @@ fun CartItemCard(
                 Spacer(modifier = Modifier.width(16.dp))
                 
                 Text(
-                    text = "$${cartItem.product.price * cartItem.quantity}",
+                    text = "$${cartItem.wallpaper.price * cartItem.quantity}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
