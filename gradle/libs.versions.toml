@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.12.4"
 composeBom = "2026.02.01"
 #koin
-koin = "4.1.1"
+koin = "4.2.1"
 #navigation
 navigation = "2.9.7"
 uiText = "1.10.4"
