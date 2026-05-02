@@ -10,6 +10,6 @@ It does not use Webview, instead it uses my own Payment SDK [Freetime SDK](https
 <h1>Freetime Maker Shop Android App Features</h1>
 </div>
 
-- [x] Integrate FreetimeSDK
-- [x] Change the Products to something more Useful instead of Apps and Games
+- [ ] Integrate FreetimeSDK
+- [ ] Change the Products to something more Useful instead of Apps and Games
 - [ ] Make it Functionable
